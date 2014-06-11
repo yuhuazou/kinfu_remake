@@ -18,7 +18,8 @@ include(cmake/Targets.cmake)
 find_package(OpenCV 2.4.8 REQUIRED COMPONENTS core viz highgui)
 find_package(CUDA 5.0 REQUIRED)
 find_package(OpenNI2 REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS} ${CUDA_INCLUDE_DIRS} ${OPENNI2_INCLUDE_DIRS})
+find_package(PCL 1.7.0 REQUIRED COMPONENTS common io gpu_kinfu_large_scale)
+include_directories(${OpenCV_INCLUDE_DIRS} ${CUDA_INCLUDE_DIRS} ${OPENNI2_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS})
 
 # ---[ misc settings
 if(USE_PROJECT_FOLDERS)
