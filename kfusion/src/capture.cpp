@@ -48,6 +48,8 @@ void kfusion::OpenNISource::open (int device)
 // uri can be a device ID or filename
 void kfusion::OpenNISource::open(const std::string& filename)
 {
+	bool oniPlayback = false;
+
     impl_ = cv::Ptr<Impl>( new Impl () );
 
     openni::Status rc;
@@ -60,8 +62,11 @@ void kfusion::OpenNISource::open(const std::string& filename)
       REPORT_ERROR (impl_->strError);
     }
 
-    if (filename.length() > 0)
+    if (filename.length() > 0) 
+	{
       rc = impl_->device.open( filename.c_str() );
+	  oniPlayback = true;
+	}
     else
       rc = impl_->device.open(openni::ANY_DEVICE);
 
@@ -97,13 +102,6 @@ void kfusion::OpenNISource::open(const std::string& filename)
       REPORT_ERROR (impl_->strError);
     }
 
-    rc = impl_->colorStream.setVideoMode(colorMode);
-    if (rc != openni::STATUS_OK)
-    {
-      sprintf (impl_->strError, "Init failed: %s\n", openni::OpenNI::getExtendedError() );
-      REPORT_ERROR (impl_->strError);
-    }
-
     rc = impl_->depthStream.create(impl_->device, openni::SENSOR_DEPTH);
     if (rc != openni::STATUS_OK)
     {
@@ -111,12 +109,23 @@ void kfusion::OpenNISource::open(const std::string& filename)
       REPORT_ERROR (impl_->strError);
     }
 
-    rc = impl_->depthStream.setVideoMode(depthMode);
-    if (rc != openni::STATUS_OK)
-    {
-      sprintf (impl_->strError, "Init failed: %s\n", openni::OpenNI::getExtendedError() );
-      REPORT_ERROR (impl_->strError);
-    }
+
+	if (!oniPlayback) 
+	{
+		rc = impl_->colorStream.setVideoMode(colorMode);
+		if (rc != openni::STATUS_OK)
+		{
+			sprintf (impl_->strError, "Init failed: %s\n", openni::OpenNI::getExtendedError() );
+			REPORT_ERROR (impl_->strError);
+		}
+
+		rc = impl_->depthStream.setVideoMode(depthMode);
+		if (rc != openni::STATUS_OK)
+		{
+			sprintf (impl_->strError, "Init failed: %s\n", openni::OpenNI::getExtendedError() );
+			REPORT_ERROR (impl_->strError);
+		}
+	}
 
     getParams ();
 
